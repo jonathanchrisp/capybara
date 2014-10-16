@@ -63,7 +63,7 @@ RSpec.describe Capybara::Session do
         expect($?.exitstatus).to be 0
       end
     end
-    
+
     describe "#accept_alert" do
       it "supports a blockless mode" do
         @session.visit('/with_js')
@@ -80,7 +80,23 @@ RSpec.describe Capybara::Selenium::Driver do
   before do
     @driver = Capybara::Selenium::Driver.new(TestApp, browser: :firefox)
   end
-  
+
+  describe '#close_window' do
+    it "should reset browser when last window closed" do
+      expect(@driver.browser).to be
+      @driver.close_window(@driver.current_window_handle)
+      #access instance variable directly so we don't create a new browser instance
+      expect(@driver.instance_variable_get(:@browser)).to be_nil
+    end
+
+    it "should not reset browser if more than one window open" do
+      expect(@driver.browser).to be
+      @driver.open_new_window
+      @driver.close_window(@driver.current_window_handle)
+      expect(@driver.browser).to_not be_nil
+    end
+  end
+
   describe '#quit' do
     it "should reset browser when quit" do
       expect(@driver.browser).to be
@@ -90,4 +106,3 @@ RSpec.describe Capybara::Selenium::Driver do
     end
   end
 end
-

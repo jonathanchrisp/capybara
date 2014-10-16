@@ -171,8 +171,10 @@ class Capybara::Selenium::Driver < Capybara::Driver::Base
   end
 
   def close_window(handle)
+    window_count = window_handles.length
     within_given_window(handle) do
       browser.close
+      @browser = nil if window_count == 1
     end
   end
 
